@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diffsearchvuln.local/schemas/candidate-cluster-1.0.0.json",
+  "title": "DiffSearchVuln semantic candidate cluster",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "candidate_id",
+    "component_key",
+    "primary_name",
+    "match_kind",
+    "match_confidence",
+    "deterministic_score",
+    "deterministic_rank",
+    "in_tournament_pool",
+    "old_function",
+    "new_function",
+    "change_evidence",
+    "cluster_members"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "candidate_id": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "component_key": { "type": "string", "minLength": 1 },
+    "primary_name": { "type": "string", "minLength": 1 },
+    "match_kind": {
+      "enum": ["modified", "added", "deleted", "low_confidence_match", "data_only"]
+    },
+    "match_confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "deterministic_score": { "type": "number", "minimum": 0 },
+    "deterministic_rank": { "type": "integer", "minimum": 1 },
+    "in_tournament_pool": { "type": "boolean" },
+    "old_function": { "$ref": "#/$defs/functionReference" },
+    "new_function": { "$ref": "#/$defs/functionReference" },
+    "change_evidence": { "type": "object" },
+    "cluster_members": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["candidate_id", "name", "kind"],
+        "properties": {
+          "candidate_id": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "name": { "type": "string" },
+          "kind": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "functionReference": {
+      "type": ["object", "null"]
+    }
+  }
+}

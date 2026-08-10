@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diffsearchvuln.local/schemas/function-export-1.0.0.json",
+  "title": "DiffSearchVuln single-version function export",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_sha256",
+    "architecture",
+    "ghidra_version",
+    "program_name",
+    "language_id",
+    "compiler_spec_id",
+    "function",
+    "warnings"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "artifact_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "architecture": { "enum": ["arm64", "arm64e"] },
+    "ghidra_version": { "type": "string", "minLength": 1 },
+    "program_name": { "type": "string", "minLength": 1 },
+    "language_id": { "type": "string", "minLength": 1 },
+    "compiler_spec_id": { "type": "string", "minLength": 1 },
+    "function": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "address",
+        "name",
+        "qualified_name",
+        "namespace",
+        "body_size",
+        "parameter_count",
+        "calling_convention",
+        "thunk",
+        "external",
+        "decompilation",
+        "instructions",
+        "callers",
+        "callees",
+        "strings",
+        "imports"
+      ],
+      "properties": {
+        "address": { "type": "string", "minLength": 1 },
+        "name": { "type": "string" },
+        "qualified_name": { "type": "string" },
+        "namespace": { "type": "string" },
+        "body_size": { "type": "integer", "minimum": 0 },
+        "parameter_count": { "type": "integer", "minimum": 0 },
+        "calling_convention": { "type": ["string", "null"] },
+        "thunk": { "type": "boolean" },
+        "external": { "type": "boolean" },
+        "decompilation": { "type": ["string", "null"] },
+        "instructions": { "type": "array", "items": { "type": "string" } },
+        "callers": { "type": "array", "items": { "type": "string" } },
+        "callees": { "type": "array", "items": { "type": "string" } },
+        "strings": { "type": "array", "items": { "type": "string" } },
+        "imports": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  }
+}

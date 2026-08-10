@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diffsearchvuln.local/schemas/ipc-request-1.0.0.json",
+  "title": "DiffSearchVuln worker request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol_version", "id", "method", "params"],
+  "properties": {
+    "protocol_version": { "const": "1.0.0" },
+    "id": { "type": "string", "minLength": 1 },
+    "method": { "type": "string", "minLength": 1 },
+    "params": { "type": "object" }
+  }
+}

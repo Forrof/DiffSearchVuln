@@ -1,0 +1,380 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1841118EF5597D6288597FCF /* FindingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A651A02B742F4EC68357A47 /* FindingsView.swift */; };
+		1C766B20DD0DCF98D555EDC5 /* ExploitLabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0AE95E0B1819D3EDE23BE10 /* ExploitLabView.swift */; };
+		2D4264DC94B29A0548F1A519 /* DiffSearchVulnCore in Frameworks */ = {isa = PBXBuildFile; productRef = EEE25FC2F3D38094202B8F80 /* DiffSearchVulnCore */; };
+		33DBF9DB7D3176E5916B8EFC /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC4B79614640A2CED71593D /* SettingsView.swift */; };
+		416147B6D8FEDF099D97D839 /* TournamentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6331DECA4394877B1B9CED71 /* TournamentView.swift */; };
+		42B2AC676B7CC83297D075EC /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF956AA77FAB94C8BC7D9E20 /* OverviewView.swift */; };
+		729C1CB74B9AD2F35DA5B9CB /* CodexActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFA7FDF6D9771E36A79080D /* CodexActivityView.swift */; };
+		7E459933816B83FDA8F6F0AF /* CandidateBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC994FA4A52623A7D00EEDD /* CandidateBrowserView.swift */; };
+		97AB81780DE54419ADB03F49 /* AnalysisWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A3563A161F2BC2BDAD2FDE /* AnalysisWorkspaceView.swift */; };
+		BE645038F3883A6261FA42F1 /* DiffSearchVulnApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA9896A4637859F07C90C6E6 /* DiffSearchVulnApp.swift */; };
+		BFB027059EEFF41E59CC880E /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D4956801F756EFB789270F /* AppModel.swift */; };
+		E45BCE2C75608A138C9226E2 /* ProductsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBFFB9B317B4CB39C889DA6 /* ProductsView.swift */; };
+		F7C4E6905DAF50045CEB903C /* AppShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B30685C2CC551B660CD08A /* AppShellView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		23D4956801F756EFB789270F /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		4AFA7FDF6D9771E36A79080D /* CodexActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexActivityView.swift; sourceTree = "<group>"; };
+		5DC994FA4A52623A7D00EEDD /* CandidateBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CandidateBrowserView.swift; sourceTree = "<group>"; };
+		6331DECA4394877B1B9CED71 /* TournamentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentView.swift; sourceTree = "<group>"; };
+		6BC4B79614640A2CED71593D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		79B30685C2CC551B660CD08A /* AppShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShellView.swift; sourceTree = "<group>"; };
+		9A651A02B742F4EC68357A47 /* FindingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindingsView.swift; sourceTree = "<group>"; };
+		A0AE95E0B1819D3EDE23BE10 /* ExploitLabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploitLabView.swift; sourceTree = "<group>"; };
+		A401656DDDAAA43B24BBD048 /* DiffSearchVuln.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DiffSearchVuln.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5A3563A161F2BC2BDAD2FDE /* AnalysisWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisWorkspaceView.swift; sourceTree = "<group>"; };
+		BA9896A4637859F07C90C6E6 /* DiffSearchVulnApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffSearchVulnApp.swift; sourceTree = "<group>"; };
+		BB2862D8334FFA9063EADB00 /* DiffSearchVulnCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DiffSearchVulnCore; path = ../DiffSearchVulnCore; sourceTree = SOURCE_ROOT; };
+		BF956AA77FAB94C8BC7D9E20 /* OverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewView.swift; sourceTree = "<group>"; };
+		DFBFFB9B317B4CB39C889DA6 /* ProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0CBC0D35CA981D1E569FB1BC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D4264DC94B29A0548F1A519 /* DiffSearchVulnCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		27ACEC9604D08EA4EC363FD6 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				BB2862D8334FFA9063EADB00 /* DiffSearchVulnCore */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		56FE8B36E45F9885159BD99C /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B5A3563A161F2BC2BDAD2FDE /* AnalysisWorkspaceView.swift */,
+				23D4956801F756EFB789270F /* AppModel.swift */,
+				79B30685C2CC551B660CD08A /* AppShellView.swift */,
+				5DC994FA4A52623A7D00EEDD /* CandidateBrowserView.swift */,
+				4AFA7FDF6D9771E36A79080D /* CodexActivityView.swift */,
+				BA9896A4637859F07C90C6E6 /* DiffSearchVulnApp.swift */,
+				A0AE95E0B1819D3EDE23BE10 /* ExploitLabView.swift */,
+				9A651A02B742F4EC68357A47 /* FindingsView.swift */,
+				BF956AA77FAB94C8BC7D9E20 /* OverviewView.swift */,
+				DFBFFB9B317B4CB39C889DA6 /* ProductsView.swift */,
+				6BC4B79614640A2CED71593D /* SettingsView.swift */,
+				6331DECA4394877B1B9CED71 /* TournamentView.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		6A11D76AEB0B64A71396BD0C = {
+			isa = PBXGroup;
+			children = (
+				27ACEC9604D08EA4EC363FD6 /* Packages */,
+				56FE8B36E45F9885159BD99C /* Sources */,
+				C16C9D5E8FB4D9B2580ECBA7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C16C9D5E8FB4D9B2580ECBA7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A401656DDDAAA43B24BBD048 /* DiffSearchVuln.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7FF9FE04A1EE56E7CA2C24A2 /* DiffSearchVuln */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2EDE63D954B73792E7215C2E /* Build configuration list for PBXNativeTarget "DiffSearchVuln" */;
+			buildPhases = (
+				5AECA006C45EBB7F9A700D36 /* Sources */,
+				0CBC0D35CA981D1E569FB1BC /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DiffSearchVuln;
+			packageProductDependencies = (
+				EEE25FC2F3D38094202B8F80 /* DiffSearchVulnCore */,
+			);
+			productName = DiffSearchVuln;
+			productReference = A401656DDDAAA43B24BBD048 /* DiffSearchVuln.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		18782E6A81F2231445B96C33 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					7FF9FE04A1EE56E7CA2C24A2 = {
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = F4EA213589ABECECC39C7569 /* Build configuration list for PBXProject "DiffSearchVuln" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 6A11D76AEB0B64A71396BD0C;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				618552B44510F8CE39E62135 /* XCLocalSwiftPackageReference "../DiffSearchVulnCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C16C9D5E8FB4D9B2580ECBA7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7FF9FE04A1EE56E7CA2C24A2 /* DiffSearchVuln */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5AECA006C45EBB7F9A700D36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				97AB81780DE54419ADB03F49 /* AnalysisWorkspaceView.swift in Sources */,
+				BFB027059EEFF41E59CC880E /* AppModel.swift in Sources */,
+				F7C4E6905DAF50045CEB903C /* AppShellView.swift in Sources */,
+				7E459933816B83FDA8F6F0AF /* CandidateBrowserView.swift in Sources */,
+				729C1CB74B9AD2F35DA5B9CB /* CodexActivityView.swift in Sources */,
+				BE645038F3883A6261FA42F1 /* DiffSearchVulnApp.swift in Sources */,
+				1C766B20DD0DCF98D555EDC5 /* ExploitLabView.swift in Sources */,
+				1841118EF5597D6288597FCF /* FindingsView.swift in Sources */,
+				42B2AC676B7CC83297D075EC /* OverviewView.swift in Sources */,
+				E45BCE2C75608A138C9226E2 /* ProductsView.swift in Sources */,
+				33DBF9DB7D3176E5916B8EFC /* SettingsView.swift in Sources */,
+				416147B6D8FEDF099D97D839 /* TournamentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		56A547C21B34299585DC1116 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		5AA54F93CD944937985DEA0C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		8649F9295F342D0CAC8D47F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.3.0;
+				PRODUCT_BUNDLE_IDENTIFIER = local.diffsearchvuln.app;
+				PRODUCT_NAME = DiffSearchVuln;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		EB31CF31CC26511DA38D1381 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.3.0;
+				PRODUCT_BUNDLE_IDENTIFIER = local.diffsearchvuln.app;
+				PRODUCT_NAME = DiffSearchVuln;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2EDE63D954B73792E7215C2E /* Build configuration list for PBXNativeTarget "DiffSearchVuln" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8649F9295F342D0CAC8D47F4 /* Debug */,
+				EB31CF31CC26511DA38D1381 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F4EA213589ABECECC39C7569 /* Build configuration list for PBXProject "DiffSearchVuln" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AA54F93CD944937985DEA0C /* Debug */,
+				56A547C21B34299585DC1116 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		618552B44510F8CE39E62135 /* XCLocalSwiftPackageReference "../DiffSearchVulnCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../DiffSearchVulnCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EEE25FC2F3D38094202B8F80 /* DiffSearchVulnCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DiffSearchVulnCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 18782E6A81F2231445B96C33 /* Project object */;
+}

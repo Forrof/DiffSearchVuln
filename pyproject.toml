@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "diffsearchvuln"
+version = "0.3.0"
+description = "Local macOS vulnerability patch-diffing workbench"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "DiffSearchVuln" }]
+dependencies = []
+
+[project.scripts]
+diffsearchvuln = "diffsearchvuln.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]

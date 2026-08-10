@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diffsearchvuln.local/schemas/final-analysis-1.0.0.json",
+  "title": "DiffSearchVuln final patch analysis",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "finding_state",
+    "selected_candidate_ids",
+    "confidence",
+    "vulnerable_behavior",
+    "attacker_preconditions",
+    "security_invariant",
+    "patch_explanation",
+    "observed_evidence",
+    "inferences",
+    "bypass_hypotheses"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "finding_state": {
+      "enum": ["likely_patch", "patch_not_localized"]
+    },
+    "selected_candidate_ids": {
+      "type": "array",
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "vulnerable_behavior": { "type": "string" },
+    "attacker_preconditions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "security_invariant": { "type": "string" },
+    "patch_explanation": { "type": "string" },
+    "observed_evidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "inferences": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "bypass_hypotheses": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

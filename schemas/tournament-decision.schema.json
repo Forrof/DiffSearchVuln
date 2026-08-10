@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diffsearchvuln.local/schemas/tournament-decision-1.0.0.json",
+  "title": "DiffSearchVuln tournament decision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "group_id",
+    "pass_index",
+    "round_index",
+    "no_strong_candidate",
+    "ranking",
+    "model",
+    "prompt_version",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "group_id": { "type": "string", "minLength": 1 },
+    "pass_index": { "type": "integer", "minimum": 0 },
+    "round_index": { "type": "integer", "minimum": 0 },
+    "no_strong_candidate": { "type": "boolean" },
+    "ranking": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["cluster_id", "rank", "absolute_score", "advanced", "explanation"],
+        "properties": {
+          "cluster_id": { "type": "string", "minLength": 1 },
+          "rank": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "absolute_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "advanced": { "type": "boolean" },
+          "explanation": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "model": { "type": "string", "minLength": 1 },
+    "prompt_version": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}

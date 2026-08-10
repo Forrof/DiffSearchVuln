@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diffsearchvuln.local/schemas/function-dossier-1.0.0.json",
+  "title": "DiffSearchVuln function dossier",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "component_key",
+    "architecture",
+    "match_kind",
+    "old_function",
+    "new_function",
+    "change_evidence",
+    "analysis_warnings"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "component_key": { "type": "string", "minLength": 1 },
+    "architecture": { "enum": ["arm64", "arm64e"] },
+    "match_kind": {
+      "enum": ["modified", "added", "deleted", "low_confidence_match", "data_only"]
+    },
+    "match_confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "old_function": { "$ref": "#/$defs/functionSide" },
+    "new_function": { "$ref": "#/$defs/functionSide" },
+    "change_evidence": {
+      "type": "object",
+      "properties": {
+        "changed_basic_blocks": { "type": "array", "items": { "type": "string" } },
+        "strings_added": { "type": "array", "items": { "type": "string" } },
+        "strings_removed": { "type": "array", "items": { "type": "string" } },
+        "imports_added": { "type": "array", "items": { "type": "string" } },
+        "imports_removed": { "type": "array", "items": { "type": "string" } },
+        "normalized_change_hash": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "analysis_warnings": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "functionSide": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["address", "name", "size", "decompilation", "callers", "callees"],
+      "properties": {
+        "address": { "type": "string" },
+        "name": { "type": ["string", "null"] },
+        "size": { "type": "integer", "minimum": 0 },
+        "decompilation": { "type": ["string", "null"] },
+        "normalized_instructions": { "type": "array", "items": { "type": "string" } },
+        "callers": { "type": "array", "items": { "type": "string" } },
+        "callees": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

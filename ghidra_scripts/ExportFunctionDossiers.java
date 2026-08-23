@@ -47,9 +47,13 @@ public class ExportFunctionDossiers extends GhidraScript {
         int maximumFunctions = arguments.length >= 4 ? Integer.parseInt(arguments[3]) : 0;
         int functionTimeoutSeconds = arguments.length >= 5 ? Integer.parseInt(arguments[4]) : 30;
         Path selectionPath = arguments.length >= 6 ? Path.of(arguments[5]).toAbsolutePath() : null;
+        boolean resetFunctions = arguments.length >= 7 && Boolean.parseBoolean(arguments[6]);
         validateArchitecture(architecture);
 
         Files.createDirectories(output.getParent());
+        if (selectionPath != null && resetFunctions) {
+            resetInternalFunctions();
+        }
         List<Function> selectedFunctions = selectionPath == null
             ? null
             : prepareSelectedFunctions(selectionPath);
@@ -98,8 +102,26 @@ public class ExportFunctionDossiers extends GhidraScript {
         );
     }
 
+    private void resetInternalFunctions() throws Exception {
+        List<Address> entries = new ArrayList<>();
+        FunctionIterator functions = currentProgram.getFunctionManager().getFunctions(true);
+        while (functions.hasNext()) {
+            monitor.checkCancelled();
+            Function function = functions.next();
+            if (!function.isExternal()) {
+                entries.add(function.getEntryPoint());
+            }
+        }
+        for (Address entry : entries) {
+            monitor.checkCancelled();
+            currentProgram.getFunctionManager().removeFunction(entry);
+        }
+        println("DIFFSEARCHVULN_RESET_FUNCTIONS removed=" + entries.size());
+    }
+
     private List<Function> prepareSelectedFunctions(Path selectionPath) throws Exception {
         List<Function> selected = new ArrayList<>();
+        int skipped = 0;
         List<String> lines = Files.readAllLines(selectionPath, StandardCharsets.UTF_8);
         for (int lineNumber = 0; lineNumber < lines.size(); lineNumber++) {
             monitor.checkCancelled();
@@ -138,10 +160,13 @@ public class ExportFunctionDossiers extends GhidraScript {
                         instruction.getMaxAddress()
                     );
                 }
-                if (instructionBody.isEmpty()) {
-                    throw new IllegalStateException(
-                        "no instructions disassembled for selected function at " + start
+                if (instructionBody.isEmpty() || !instructionBody.contains(start)) {
+                    skipped++;
+                    println(
+                        "DIFFSEARCHVULN_SELECTION_SKIPPED address=" + start +
+                        " reason=no_entry_instruction"
                     );
+                    continue;
                 }
                 String fallbackName = "selected_" + start.toString();
                 function = currentProgram.getListing().createFunction(
@@ -159,6 +184,7 @@ public class ExportFunctionDossiers extends GhidraScript {
         selected.sort(Comparator.comparing(Function::getEntryPoint));
         println(
             "DIFFSEARCHVULN_SELECTION functions=" + selected.size() +
+            " skipped=" + skipped +
             " source=" + selectionPath
         );
         return selected;

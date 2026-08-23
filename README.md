@@ -6,6 +6,29 @@ with Ghidra, narrows changed code through reproducible five-candidate Codex
 tournaments, and preserves the evidence needed to understand a security patch
 and investigate possible bypasses.
 
+## What the app is for
+
+DiffSearchVuln helps an authorized vulnerability researcher or vendor-security
+engineer answer four questions about adjacent software releases:
+
+1. What security-relevant code actually changed in the shipped binaries?
+2. Which changed functions most likely implement the announced patch?
+3. Does the old behavior reproduce, and does the patched build block it?
+4. Does the patched and latest release still permit a distinct boundary
+   violation under controlled testing?
+
+The native app organizes products and release-pair workspaces, presents exact
+function diffs and reproducible tournament decisions, explains before/after
+flows, and exposes a deliberately gated Exploit Lab for contained local proof.
+It is evidence tooling, not a live-target scanner, autonomous exploit launcher,
+or substitute for researcher review.
+
+The intended users are independent bug-bounty researchers, vendor/project
+security engineers, reviewers who audit the evidence trail, and the trusted
+operator of the dedicated research Mac. It is not designed for untrusted
+multi-tenant use. See the complete [user and application threat
+model](docs/THREAT_MODEL.md).
+
 Phases one through four have met their core acceptance conditions. The
 repository now includes the architecture, versioned interchange schemas,
 SQLite storage, setup doctor, immutable artifact vault, safe Mach-O
@@ -169,6 +192,7 @@ xcodebuild -project DiffSearchVuln.xcodeproj \
 ## Design documents
 
 - [Architecture](docs/ARCHITECTURE.md)
+- [User and application threat model](docs/THREAT_MODEL.md)
 - [Implementation plan](docs/IMPLEMENTATION_PLAN.md)
 - [Research references and acceptance fixtures](docs/REFERENCES.md)
 - [Phase 2 acceptance results](docs/PHASE2_RESULTS.md)

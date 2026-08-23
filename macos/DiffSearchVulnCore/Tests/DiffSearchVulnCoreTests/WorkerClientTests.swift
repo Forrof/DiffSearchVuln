@@ -56,6 +56,46 @@ import Testing
     #expect(wireContext["vm_identifier"] as? String == "")
 }
 
+@Test func finalAnalysisDecodesSiblingImplementationSearch() throws {
+    let source = Data(#"""
+    {
+        "finding_state":"likely_patch",
+        "selected_candidate_ids":["candidate-a"],
+        "confidence":0.94,
+        "vulnerable_behavior":"unchecked path",
+        "attacker_preconditions":["controlled path"],
+        "security_invariant":"path remains below root",
+        "patch_explanation":"new containment check",
+        "observed_evidence":["new branch"],
+        "inferences":["security intent"],
+        "bypass_hypotheses":["alternate normalization"],
+        "sibling_implementation_search":{
+            "status":"partial",
+            "searched_function_ids":["candidate-a"],
+            "same_function_call_sites":[{
+                "function":"example.routeRequest",
+                "relationship":"direct caller",
+                "evidence":"callee edge targets the patched validator",
+                "risk":"uncertain",
+                "next_test":"exercise the alternate route"
+            }],
+            "similar_implementations":[],
+            "coverage_notes":["all functions scanned"],
+            "unresolved_gaps":["one decompilation omitted"]
+        }
+    }
+    """#.utf8)
+
+    let analysis = try JSONDecoder().decode(WorkerFinalAnalysis.self, from: source)
+
+    #expect(analysis.siblingImplementationSearch?.status == "partial")
+    #expect(
+        analysis.siblingImplementationSearch?.sameFunctionCallSites.first?.function
+            == "example.routeRequest"
+    )
+    #expect(analysis.siblingImplementationSearch?.unresolvedGaps.count == 1)
+}
+
 @Test func realWorkerNegotiatesProtocolAndPersistsProducts() throws {
     let fileManager = FileManager.default
     let python = URL(fileURLWithPath: "/opt/homebrew/bin/python3.12")

@@ -201,6 +201,22 @@ class IPCTests(unittest.TestCase):
             "observed_evidence": ["comparison"],
             "inferences": ["likely intent"],
             "bypass_hypotheses": ["alternate normalization"],
+            "sibling_implementation_search": {
+                "status": "partial",
+                "searched_function_ids": finalist_ids,
+                "same_function_call_sites": [
+                    {
+                        "function": "example.routeRequest",
+                        "relationship": "direct caller of the patched validator",
+                        "evidence": "The call edge targets the patched function.",
+                        "risk": "uncertain",
+                        "next_test": "Exercise the alternate route with malformed input.",
+                    }
+                ],
+                "similar_implementations": [],
+                "coverage_notes": ["The patched export was scanned."],
+                "unresolved_gaps": ["One caller requires dynamic confirmation."],
+            },
         }
         state = {
             "schema_version": "1.0.0",
@@ -232,6 +248,10 @@ class IPCTests(unittest.TestCase):
         result = response["result"]["run"]
         self.assertEqual("completed", result["status"])
         self.assertEqual(0.91, result["final_analysis"]["confidence"])
+        self.assertEqual(
+            "partial",
+            result["final_analysis"]["sibling_implementation_search"]["status"],
+        )
         self.assertEqual(finalist_ids, result["finalist_ids"])
 
     def test_codex_exploit_attempt_is_explicit_and_recoverable(self) -> None:

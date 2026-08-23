@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
+from heapq import heappush, heapreplace
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +15,16 @@ class DossierError(RuntimeError):
 
 
 _TOURNAMENT_DECOMPILATION_LIMIT = 30_000
+_SIBLING_DECOMPILATION_LIMIT = 8_000
+_NAME_TOKEN_PATTERN = re.compile(r"[A-Za-z][A-Za-z0-9]{2,}")
+_GENERIC_NAME_TOKENS = {
+    "fun",
+    "function",
+    "global",
+    "internal",
+    "local",
+    "sub",
+}
 
 
 @dataclass
@@ -199,6 +211,152 @@ class CandidateCatalog:
             )
         return dossier
 
+    def sibling_search_evidence(
+        self,
+        candidate_ids: tuple[str, ...],
+        *,
+        direct_record_limit: int = 12,
+        similar_record_limit: int = 16,
+    ) -> dict[str, Any]:
+        """Search the patched export for direct callers and semantic siblings.
+
+        The scan covers every function in the new export. Full decompilation is
+        retained only for a bounded number of matches so the resulting evidence
+        can be supplied to the final analysis without silently exceeding its
+        prompt budget. Coverage fields make every omission explicit.
+        """
+        if direct_record_limit < 1 or similar_record_limit < 1:
+            raise ValueError("sibling search record limits must be positive")
+
+        seeds: list[dict[str, Any]] = []
+        unavailable: list[str] = []
+        for candidate_id in candidate_ids:
+            candidate = self.by_id(candidate_id)
+            record = self._record("new", candidate.get("new_function"))
+            if record is None:
+                unavailable.append(candidate_id)
+                continue
+            function = record["function"]
+            seeds.append(
+                {
+                    "candidate_id": candidate_id,
+                    "address": _normalize_address(function.get("address", "")),
+                    "name": _function_name(function),
+                    "caller_addresses": {
+                        address
+                        for value in function.get("callers", [])
+                        if (address := _relationship_address(value)) is not None
+                    },
+                    "callees": _relationship_set(function.get("callees", [])),
+                    "imports": _meaningful_values(function.get("imports", [])),
+                    "strings": _meaningful_values(function.get("strings", [])),
+                    "name_tokens": _name_tokens(function),
+                }
+            )
+
+        direct_matches: list[dict[str, Any]] = []
+        direct_count = 0
+        similar_count = 0
+        similar_heap: list[tuple[int, str, dict[str, Any]]] = []
+        functions_scanned = 0
+        export_path = Path(self.manifest["new_export"]["path"])
+        with export_path.open("r", encoding="utf-8") as records:
+            for line_number, line in enumerate(records, start=1):
+                if not line.strip():
+                    continue
+                try:
+                    record = json.loads(line)
+                    function = record["function"]
+                except (json.JSONDecodeError, KeyError, TypeError) as error:
+                    raise DossierError(
+                        f"invalid new export record on line {line_number}"
+                    ) from error
+                functions_scanned += 1
+                address = _normalize_address(function.get("address", ""))
+                callees = _relationship_set(function.get("callees", []))
+                record_name = _function_name(function)
+                is_direct = False
+                for seed in seeds:
+                    if address == seed["address"]:
+                        continue
+                    signals: list[str] = []
+                    if address in seed["caller_addresses"]:
+                        signals.append("listed in the patched function's caller set")
+                    if seed["address"] in callees:
+                        signals.append("callee edge targets the patched function")
+                    if signals:
+                        is_direct = True
+                        direct_count += 1
+                        direct_matches.append(
+                            {
+                                "evidence_label": "OBSERVED",
+                                "seed_candidate_id": seed["candidate_id"],
+                                "seed_function": seed["name"],
+                                "relationship": "direct_call_site",
+                                "match_signals": signals,
+                                "function": _function_summary(record),
+                                "record": record,
+                            }
+                        )
+                if is_direct or any(address == seed["address"] for seed in seeds):
+                    continue
+
+                for seed in seeds:
+                    score, signals = _similarity_score(function, callees, seed)
+                    if score <= 0:
+                        continue
+                    similar_count += 1
+                    match = {
+                        "evidence_label": "OBSERVED",
+                        "seed_candidate_id": seed["candidate_id"],
+                        "seed_function": seed["name"],
+                        "relationship": "similar_implementation_candidate",
+                        "similarity_score": score,
+                        "match_signals": signals,
+                        "function": _function_summary(record),
+                        "record": record,
+                    }
+                    key = f"{seed['candidate_id']}:{address}:{record_name}"
+                    item = (score, key, match)
+                    if len(similar_heap) < similar_record_limit:
+                        heappush(similar_heap, item)
+                    elif item[:2] > similar_heap[0][:2]:
+                        heapreplace(similar_heap, item)
+
+        direct_matches.sort(
+            key=lambda item: (
+                item["seed_candidate_id"],
+                item["function"]["address"],
+                item["function"]["qualified_name"],
+            )
+        )
+        included_direct = direct_matches[:direct_record_limit]
+        for item in included_direct:
+            item["record"] = _sanitize_sibling_record(item["record"])
+        similar_matches = [item[2] for item in sorted(similar_heap, reverse=True)]
+        for item in similar_matches:
+            item["record"] = _sanitize_sibling_record(item["record"])
+
+        return {
+            "schema_version": "1.0.0",
+            "evidence_label": "OBSERVED",
+            "searched_function_ids": [seed["candidate_id"] for seed in seeds],
+            "unavailable_function_ids": unavailable,
+            "same_function_call_sites": included_direct,
+            "similar_implementations": similar_matches,
+            "coverage": {
+                "evidence_label": "OBSERVED",
+                "export_side": "new",
+                "functions_scanned": functions_scanned,
+                "direct_matches_found": direct_count,
+                "direct_records_included": len(included_direct),
+                "direct_records_omitted": max(0, direct_count - len(included_direct)),
+                "similar_matches_found": similar_count,
+                "similar_records_included": len(similar_matches),
+                "similar_records_omitted": max(0, similar_count - len(similar_matches)),
+            },
+        }
+
     def _record(self, side: str, reference: dict[str, Any] | None) -> dict[str, Any] | None:
         if reference is None:
             return None
@@ -282,3 +440,112 @@ def _sanitize_record(
         "function": function,
         "warnings": warnings,
     }
+
+
+def _sanitize_sibling_record(record: dict[str, Any]) -> dict[str, Any]:
+    sanitized = _sanitize_record(
+        record,
+        include_instructions=False,
+        preserve_complete_decompilation=True,
+    )
+    assert sanitized is not None
+    function = sanitized["function"]
+    decompilation = function.get("decompilation")
+    if isinstance(decompilation, str) and len(decompilation) > _SIBLING_DECOMPILATION_LIMIT:
+        half = _SIBLING_DECOMPILATION_LIMIT // 2
+        omitted = len(decompilation) - (half * 2)
+        function["decompilation"] = (
+            decompilation[:half]
+            + f"\n/* {omitted} sibling-search decompilation characters omitted */\n"
+            + decompilation[-half:]
+        )
+        sanitized["warnings"].append(
+            f"decompilation: omitted {omitted} middle characters from sibling-search evidence"
+        )
+    return sanitized
+
+
+def _normalize_address(value: Any) -> str:
+    return str(value).strip().lower().removeprefix("0x")
+
+
+def _relationship_address(value: Any) -> str | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    address = value.rsplit("@", 1)[-1]
+    normalized = _normalize_address(address)
+    return normalized or None
+
+
+def _relationship_set(values: Any) -> set[str]:
+    if not isinstance(values, list):
+        return set()
+    return {
+        address
+        for value in values
+        if (address := _relationship_address(value)) is not None
+    }
+
+
+def _meaningful_values(values: Any) -> set[str]:
+    if not isinstance(values, list):
+        return set()
+    return {
+        value.strip().lower()
+        for value in values
+        if isinstance(value, str) and 3 <= len(value.strip()) <= 512
+    }
+
+
+def _name_tokens(function: dict[str, Any]) -> set[str]:
+    names = " ".join(
+        str(function.get(field, "")) for field in ("name", "qualified_name", "namespace")
+    )
+    return {
+        token.lower()
+        for token in _NAME_TOKEN_PATTERN.findall(names)
+        if token.lower() not in _GENERIC_NAME_TOKENS
+    }
+
+
+def _function_name(function: dict[str, Any]) -> str:
+    return str(function.get("qualified_name") or function.get("name") or function.get("address"))
+
+
+def _function_summary(record: dict[str, Any]) -> dict[str, Any]:
+    function = record["function"]
+    return {
+        "address": _normalize_address(function.get("address", "")),
+        "name": str(function.get("name", "")),
+        "qualified_name": _function_name(function),
+        "namespace": str(function.get("namespace", "")),
+        "body_size": int(function.get("body_size", 0)),
+    }
+
+
+def _similarity_score(
+    function: dict[str, Any], callees: set[str], seed: dict[str, Any]
+) -> tuple[int, list[str]]:
+    shared_callees = sorted(callees & seed["callees"])
+    shared_imports = sorted(_meaningful_values(function.get("imports", [])) & seed["imports"])
+    shared_strings = sorted(_meaningful_values(function.get("strings", [])) & seed["strings"])
+    shared_name_tokens = sorted(_name_tokens(function) & seed["name_tokens"])
+    score = (
+        len(shared_callees) * 7
+        + len(shared_imports) * 5
+        + min(len(shared_strings), 4) * 3
+        + min(len(shared_name_tokens), 3) * 2
+    )
+    strong_signal = bool(shared_callees or shared_imports or shared_strings)
+    if not strong_signal and len(shared_name_tokens) < 2:
+        return 0, []
+    signals: list[str] = []
+    if shared_callees:
+        signals.append(f"shared callees: {', '.join(shared_callees[:6])}")
+    if shared_imports:
+        signals.append(f"shared imports: {', '.join(shared_imports[:6])}")
+    if shared_strings:
+        signals.append(f"shared strings: {', '.join(shared_strings[:4])}")
+    if shared_name_tokens:
+        signals.append(f"shared name terms: {', '.join(shared_name_tokens[:6])}")
+    return score, signals

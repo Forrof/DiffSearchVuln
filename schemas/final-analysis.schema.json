@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://diffsearchvuln.local/schemas/final-analysis-1.0.0.json",
+  "$id": "https://diffsearchvuln.local/schemas/final-analysis-1.1.0.json",
   "title": "DiffSearchVuln final patch analysis",
   "type": "object",
   "additionalProperties": false,
@@ -14,10 +14,11 @@
     "patch_explanation",
     "observed_evidence",
     "inferences",
-    "bypass_hypotheses"
+    "bypass_hypotheses",
+    "sibling_implementation_search"
   ],
   "properties": {
-    "schema_version": { "const": "1.0.0" },
+    "schema_version": { "const": "1.1.0" },
     "finding_state": {
       "enum": ["likely_patch", "patch_not_localized"]
     },
@@ -46,6 +47,58 @@
     "bypass_hypotheses": {
       "type": "array",
       "items": { "type": "string" }
+    },
+    "sibling_implementation_search": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "searched_function_ids",
+        "same_function_call_sites",
+        "similar_implementations",
+        "coverage_notes",
+        "unresolved_gaps"
+      ],
+      "properties": {
+        "status": { "enum": ["complete", "partial", "not_applicable"] },
+        "searched_function_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "same_function_call_sites": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/siblingFinding" }
+        },
+        "similar_implementations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/siblingFinding" }
+        },
+        "coverage_notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "unresolved_gaps": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "siblingFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["function", "relationship", "evidence", "risk", "next_test"],
+      "properties": {
+        "function": { "type": "string" },
+        "relationship": { "type": "string" },
+        "evidence": { "type": "string" },
+        "risk": {
+          "enum": ["equivalent_check", "missing_check", "uncertain"]
+        },
+        "next_test": { "type": "string" }
+      }
     }
   }
 }

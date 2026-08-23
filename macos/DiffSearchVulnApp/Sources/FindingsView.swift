@@ -32,6 +32,8 @@ struct FindingsView: View {
                             attempt: model.codexExploitAttempt
                         )
 
+                        SiblingImplementationSearchSection(analysis: analysis)
+
                         if let attempt = model.codexExploitAttempt {
                             DynamicProofResult(attempt: attempt)
                         }
@@ -126,7 +128,19 @@ private struct DynamicCampaignControl: View {
     }
 
     private func startResearch() {
-        let hypotheses = analysis.bypassHypotheses.enumerated().map { index, value in
+        var researchTargets = analysis.bypassHypotheses
+        if let siblingSearch = analysis.siblingImplementationSearch {
+            let siblingTargets = (
+                siblingSearch.sameFunctionCallSites + siblingSearch.similarImplementations
+            ).filter { $0.risk != "equivalent_check" }.map {
+                "Sibling path \($0.function) [\($0.risk)]: \($0.nextTest)"
+            }
+            researchTargets.append(contentsOf: siblingTargets)
+            researchTargets.append(contentsOf: siblingSearch.unresolvedGaps.map {
+                "Sibling-search coverage gap: \($0)"
+            })
+        }
+        let hypotheses = researchTargets.enumerated().map { index, value in
             "\(index + 1). \(value)"
         }.joined(separator: "\n")
         model.askCodexToExploit(
@@ -137,6 +151,130 @@ private struct DynamicCampaignControl: View {
             executionMode: "host_dynamic"
         )
         showCodexActivity = model.codexActivitySession != nil
+    }
+}
+
+private struct SiblingImplementationSearchSection: View {
+    let analysis: WorkerFinalAnalysis
+
+    var body: some View {
+        GroupBox("Same-function and sibling implementation search") {
+            VStack(alignment: .leading, spacing: 14) {
+                if let search = analysis.siblingImplementationSearch {
+                    HStack {
+                        Label(
+                            search.status.replacingOccurrences(of: "_", with: " ").uppercased(),
+                            systemImage: search.status == "complete"
+                                ? "checkmark.magnifyingglass"
+                                : "exclamationmark.magnifyingglass"
+                        )
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(search.status == "complete" ? Color.green : Color.orange)
+                        Spacer()
+                        Text("\(search.searchedFunctionIDs.count) patched function(s) searched")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Text("The patched export was scanned for every direct caller of the selected function and for other implementations sharing helpers, imports, strings, or semantic naming. These paths become dynamic test targets when protection is missing or uncertain.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+
+                    SiblingFindingList(
+                        title: "Same patched function used elsewhere",
+                        emptyText: "No additional direct call sites were identified in the scanned export.",
+                        findings: search.sameFunctionCallSites
+                    )
+                    SiblingFindingList(
+                        title: "Similar implementations elsewhere",
+                        emptyText: "No evidence-backed similar implementation was identified.",
+                        findings: search.similarImplementations
+                    )
+                    if !search.coverageNotes.isEmpty {
+                        FindingList(
+                            title: "Observed coverage",
+                            icon: "scope",
+                            tint: .blue,
+                            values: search.coverageNotes
+                        )
+                    }
+                    if !search.unresolvedGaps.isEmpty {
+                        FindingList(
+                            title: "Unresolved coverage gaps",
+                            icon: "exclamationmark.triangle",
+                            tint: .orange,
+                            values: search.unresolvedGaps
+                        )
+                    }
+                } else {
+                    Label("Legacy analysis — rerun the tournament to generate sibling-search evidence.", systemImage: "arrow.clockwise")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(8)
+        }
+    }
+}
+
+private struct SiblingFindingList: View {
+    let title: String
+    let emptyText: String
+    let findings: [WorkerSiblingImplementationFinding]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Text(title)
+                .font(.headline)
+            if findings.isEmpty {
+                Text(emptyText)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(findings) { finding in
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(alignment: .firstTextBaseline) {
+                            Text(finding.function)
+                                .font(.callout.monospaced().weight(.medium))
+                                .textSelection(.enabled)
+                            Spacer()
+                            Text(riskLabel(finding.risk))
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(riskColor(finding.risk))
+                        }
+                        Text(finding.relationship)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text("OBSERVED: \(finding.evidence)")
+                            .font(.callout)
+                            .textSelection(.enabled)
+                        if finding.risk != "equivalent_check" {
+                            Text("NEXT TEST: \(finding.nextTest)")
+                                .font(.caption)
+                                .foregroundStyle(.orange)
+                                .textSelection(.enabled)
+                        }
+                    }
+                    .padding(11)
+                    .background(riskColor(finding.risk).opacity(0.07), in: RoundedRectangle(cornerRadius: 9))
+                }
+            }
+        }
+    }
+
+    private func riskLabel(_ risk: String) -> String {
+        switch risk {
+        case "equivalent_check": "EQUIVALENT CHECK"
+        case "missing_check": "MISSING CHECK"
+        default: "UNCERTAIN"
+        }
+    }
+
+    private func riskColor(_ risk: String) -> Color {
+        switch risk {
+        case "equivalent_check": .green
+        case "missing_check": .red
+        default: .orange
+        }
     }
 }
 

@@ -136,7 +136,18 @@ After adjudication, Codex analyzes the final clusters to explain:
 - how the new version enforces that invariant;
 - relevant changes across functions or components;
 - residual assumptions and plausible bypass hypotheses;
+- direct callers of the patched function and whether they preserve the invariant;
+- similar implementations elsewhere and whether they carry an equivalent check;
+- whole-export scan coverage, omitted evidence, and unresolved review gaps;
 - proposed local regression tests.
+
+The sibling search is deterministic and scans the complete patched function
+export before Codex analysis. Call-graph relationships and similarity signals
+are labeled `OBSERVED`; the conclusion about whether an equivalent invariant is
+present remains an analytical classification. Full sibling decompilation is
+bounded for prompt safety, and every omitted record is preserved as an
+unresolved coverage gap rather than being treated as reviewed. Missing and
+uncertain sibling checks are added to the contained dynamic test campaign.
 
 Deep analysis can reopen eliminated functions and query the complete cached diff.
 Findings have three states: `candidate`, `likely_patch`, and

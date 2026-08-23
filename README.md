@@ -9,13 +9,15 @@ and investigate possible bypasses.
 ## What the app is for
 
 DiffSearchVuln helps an authorized vulnerability researcher or vendor-security
-engineer answer four questions about adjacent software releases:
+engineer answer five questions about adjacent software releases:
 
 1. What security-relevant code actually changed in the shipped binaries?
 2. Which changed functions most likely implement the announced patch?
 3. Does the old behavior reproduce, and does the patched build block it?
 4. Does the patched and latest release still permit a distinct boundary
    violation under controlled testing?
+5. Is the same patched function, or a semantically similar implementation,
+   reachable elsewhere without an equivalent security check?
 
 The native app organizes products and release-pair workspaces, presents exact
 function diffs and reproducible tournament decisions, explains before/after
@@ -36,7 +38,11 @@ inspection/thinning, and cached deterministic Ghidra function exports. It also
 recovers Go pclntab names, matches old/new functions, ranks semantic change
 candidates, builds directly related function clusters, and runs two-pass,
 five-candidate Codex tournaments with an independent final adjudication and
-deep patch analysis. The first versioned native-worker protocol is implemented;
+deep patch analysis. Finalist analysis also performs a whole-export sibling
+search: it enumerates direct call sites of the patched function, ranks similar
+implementations using shared callees/imports/strings/name terms, records exact
+coverage and omissions, and turns missing or uncertain checks into dynamic test
+targets. The first versioned native-worker protocol is implemented;
 its Swift client library builds and passes live cross-language tests. A native
 SwiftUI application now connects to that worker and provides persistent,
 separately selectable analysis workspaces. Each workspace groups Summary,

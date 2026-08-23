@@ -53,7 +53,12 @@ class FakeCodex:
             if "finding_state" in output_schema["properties"]
             else "UNTRUSTED_BINARY_EVIDENCE_JSON:\n"
         )
-        dossiers = json.loads(prompt.split(marker, 1)[1])
+        encoded_dossiers = prompt.split(marker, 1)[1]
+        if marker == "UNTRUSTED_FINALIST_EVIDENCE_JSON:\n":
+            encoded_dossiers = encoded_dossiers.split(
+                "\n\nUNTRUSTED_SIBLING_SEARCH_EVIDENCE_JSON:\n", 1
+            )[0]
+        dossiers = json.loads(encoded_dossiers)
         ordered = sorted(
             dossiers,
             key=lambda dossier: dossier["candidate"]["deterministic_rank"],
@@ -71,6 +76,14 @@ class FakeCodex:
                 "observed_evidence": ["comparison"],
                 "inferences": ["likely"],
                 "bypass_hypotheses": ["alternate separator"],
+                "sibling_implementation_search": {
+                    "status": "complete",
+                    "searched_function_ids": ids[:2],
+                    "same_function_call_sites": [],
+                    "similar_implementations": [],
+                    "coverage_notes": ["All functions in the patched export were scanned."],
+                    "unresolved_gaps": [],
+                },
             }
         else:
             response = {
@@ -163,6 +176,12 @@ class TournamentTests(unittest.TestCase):
         self.assertEqual(8, fake.calls)
         analysis = json.loads(Path(first.final_analysis_path).read_text(encoding="utf-8"))
         self.assertEqual("likely_patch", analysis["finding_state"])
+        sibling_evidence = json.loads(
+            (Path(first.run_path) / "final-analysis/sibling-search-evidence.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(10, sibling_evidence["coverage"]["functions_scanned"])
         second = runner.run(
             diff.cache_path,
             advisory_text="security path validation",

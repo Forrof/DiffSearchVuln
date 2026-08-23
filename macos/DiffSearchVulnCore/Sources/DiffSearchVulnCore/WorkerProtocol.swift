@@ -267,6 +267,7 @@ public struct WorkerFinalAnalysis: Decodable, Equatable, Sendable {
     public let observedEvidence: [String]
     public let inferences: [String]
     public let bypassHypotheses: [String]
+    public let siblingImplementationSearch: WorkerSiblingImplementationSearch?
 
     enum CodingKeys: String, CodingKey {
         case findingState = "finding_state"
@@ -279,6 +280,40 @@ public struct WorkerFinalAnalysis: Decodable, Equatable, Sendable {
         case observedEvidence = "observed_evidence"
         case inferences
         case bypassHypotheses = "bypass_hypotheses"
+        case siblingImplementationSearch = "sibling_implementation_search"
+    }
+}
+
+public struct WorkerSiblingImplementationSearch: Decodable, Equatable, Sendable {
+    public let status: String
+    public let searchedFunctionIDs: [String]
+    public let sameFunctionCallSites: [WorkerSiblingImplementationFinding]
+    public let similarImplementations: [WorkerSiblingImplementationFinding]
+    public let coverageNotes: [String]
+    public let unresolvedGaps: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case status
+        case searchedFunctionIDs = "searched_function_ids"
+        case sameFunctionCallSites = "same_function_call_sites"
+        case similarImplementations = "similar_implementations"
+        case coverageNotes = "coverage_notes"
+        case unresolvedGaps = "unresolved_gaps"
+    }
+}
+
+public struct WorkerSiblingImplementationFinding: Decodable, Equatable, Sendable, Identifiable {
+    public let function: String
+    public let relationship: String
+    public let evidence: String
+    public let risk: String
+    public let nextTest: String
+
+    public var id: String { "\(function):\(relationship)" }
+
+    enum CodingKeys: String, CodingKey {
+        case function, relationship, evidence, risk
+        case nextTest = "next_test"
     }
 }
 

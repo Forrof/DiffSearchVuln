@@ -22,6 +22,12 @@ engineer answer five questions about adjacent software releases:
 The native app organizes products and release-pair workspaces, presents exact
 function diffs and reproducible tournament decisions, explains before/after
 flows, and exposes a deliberately gated Exploit Lab for contained local proof.
+Its Program Intelligence section keeps bounty scope, authorization, tooling,
+disclosure, prior-report, and local-replication gates in local app preferences;
+no program records or confidential brief data ship in the public repository.
+The section automatically excludes paused, closed, application-only,
+non-paying, prior-report-conflicted, non-local, and tooling-prohibited targets,
+and requires a fresh scope review before marking a program eligible.
 It is evidence tooling, not a live-target scanner, autonomous exploit launcher,
 or substitute for researcher review.
 

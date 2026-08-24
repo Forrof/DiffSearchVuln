@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17D7FC507B349DB85C162677 /* ProgramIntelligenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231CDFFCD1BF06095187295D /* ProgramIntelligenceView.swift */; };
 		1841118EF5597D6288597FCF /* FindingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A651A02B742F4EC68357A47 /* FindingsView.swift */; };
 		1C766B20DD0DCF98D555EDC5 /* ExploitLabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0AE95E0B1819D3EDE23BE10 /* ExploitLabView.swift */; };
 		2D4264DC94B29A0548F1A519 /* DiffSearchVulnCore in Frameworks */ = {isa = PBXBuildFile; productRef = EEE25FC2F3D38094202B8F80 /* DiffSearchVulnCore */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		231CDFFCD1BF06095187295D /* ProgramIntelligenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramIntelligenceView.swift; sourceTree = "<group>"; };
 		23D4956801F756EFB789270F /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		4AFA7FDF6D9771E36A79080D /* CodexActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexActivityView.swift; sourceTree = "<group>"; };
 		5DC994FA4A52623A7D00EEDD /* CandidateBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CandidateBrowserView.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 				9A651A02B742F4EC68357A47 /* FindingsView.swift */,
 				BF956AA77FAB94C8BC7D9E20 /* OverviewView.swift */,
 				DFBFFB9B317B4CB39C889DA6 /* ProductsView.swift */,
+				231CDFFCD1BF06095187295D /* ProgramIntelligenceView.swift */,
 				6BC4B79614640A2CED71593D /* SettingsView.swift */,
 				6331DECA4394877B1B9CED71 /* TournamentView.swift */,
 			);
@@ -168,6 +171,7 @@
 				1841118EF5597D6288597FCF /* FindingsView.swift in Sources */,
 				42B2AC676B7CC83297D075EC /* OverviewView.swift in Sources */,
 				E45BCE2C75608A138C9226E2 /* ProductsView.swift in Sources */,
+				17D7FC507B349DB85C162677 /* ProgramIntelligenceView.swift in Sources */,
 				33DBF9DB7D3176E5916B8EFC /* SettingsView.swift in Sources */,
 				416147B6D8FEDF099D97D839 /* TournamentView.swift in Sources */,
 			);

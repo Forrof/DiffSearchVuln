@@ -10,7 +10,6 @@ struct AppShellView: View {
                 Section("Workspace") {
                     sidebarItem(.analyses)
                     sidebarItem(.products)
-                    sidebarItem(.programs)
                 }
                 Section {
                     sidebarItem(.settings)
@@ -24,8 +23,6 @@ struct AppShellView: View {
                     AnalysisWorkspaceView()
                 case .products:
                     ProductsView()
-                case .programs:
-                    ProgramIntelligenceView()
                 case .settings:
                     SettingsView()
                 }

@@ -5,7 +5,6 @@ import Observation
 enum AppSection: String, CaseIterable, Identifiable {
     case analyses
     case products
-    case programs
     case settings
 
     var id: String { rawValue }
@@ -14,7 +13,6 @@ enum AppSection: String, CaseIterable, Identifiable {
         switch self {
         case .analyses: "Analyses"
         case .products: "Products"
-        case .programs: "Program Intelligence"
         case .settings: "Settings"
         }
     }
@@ -23,118 +21,8 @@ enum AppSection: String, CaseIterable, Identifiable {
         switch self {
         case .analyses: "square.stack.3d.up"
         case .products: "shippingbox"
-        case .programs: "checkmark.shield"
         case .settings: "gearshape"
         }
-    }
-}
-
-enum BountyProgramAccess: String, Codable, CaseIterable, Identifiable {
-    case publicProgram = "Public program"
-    case privateInvite = "Private invite"
-
-    var id: String { rawValue }
-}
-
-enum BountyProgramLifecycle: String, Codable, CaseIterable, Identifiable {
-    case active = "Active"
-    case paused = "Paused"
-    case closed = "Closed"
-    case applicationOnly = "Application portal only"
-    case notReviewed = "Not reviewed"
-
-    var id: String { rawValue }
-}
-
-enum BountyToolingPolicy: String, Codable, CaseIterable, Identifiable {
-    case explicitlyAllowed = "Patch analysis explicitly allowed"
-    case scannersProhibited = "Scanners prohibited; manual analysis allowed"
-    case clarificationRequired = "Written clarification required"
-    case prohibited = "Diff tooling prohibited"
-    case notReviewed = "Not reviewed"
-
-    var id: String { rawValue }
-}
-
-enum BountyDisclosurePolicy: String, Codable, CaseIterable, Identifiable {
-    case coordinated = "Coordinated disclosure"
-    case permanentNondisclosure = "Permanent nondisclosure"
-    case privateProgram = "Private-program terms"
-    case notReviewed = "Not reviewed"
-
-    var id: String { rawValue }
-}
-
-enum ProgramGateStatus: String {
-    case eligible = "Eligible"
-    case reviewRequired = "Review required"
-    case blocked = "Blocked"
-    case excluded = "Excluded"
-}
-
-struct BountyProgramRecord: Codable, Hashable, Identifiable {
-    let id: String
-    var name: String
-    var platform: String
-    var programURL: String
-    var targetName: String
-    var maximumP1Reward: String
-    var maximumP2Reward: String
-    var access: BountyProgramAccess
-    var lifecycle: BountyProgramLifecycle
-    var toolingPolicy: BountyToolingPolicy
-    var disclosurePolicy: BountyDisclosurePolicy
-    var isPaid: Bool
-    var highCriticalInScope: Bool
-    var localTestingAllowed: Bool
-    var adjacentReleasesAvailable: Bool
-    var scopeReviewed: Bool
-    var scopeReviewedAt: Date
-    var identityVerified: Bool
-    var priorReportConflict: Bool
-    var notes: String
-
-    var gateStatus: ProgramGateStatus {
-        if lifecycle == .paused || lifecycle == .closed || lifecycle == .applicationOnly {
-            return .excluded
-        }
-        if priorReportConflict || !isPaid || !localTestingAllowed || toolingPolicy == .prohibited {
-            return .excluded
-        }
-        if !identityVerified {
-            return .blocked
-        }
-        if lifecycle != .active || !highCriticalInScope || !adjacentReleasesAvailable
-            || !scopeReviewed || toolingPolicy == .notReviewed
-            || toolingPolicy == .clarificationRequired || disclosurePolicy == .notReviewed {
-            return .reviewRequired
-        }
-        let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
-        if scopeReviewedAt < sevenDaysAgo {
-            return .reviewRequired
-        }
-        return .eligible
-    }
-
-    var gateExplanation: String {
-        if lifecycle == .paused { return "Testing is paused. Do not analyze or submit until the brief reopens." }
-        if lifecycle == .closed { return "The program is closed." }
-        if lifecycle == .applicationOnly { return "This page accepts applications, not vulnerability reports." }
-        if priorReportConflict { return "A prior or active report conflicts with the program-selection rule." }
-        if !isPaid { return "The current campaign is limited to paid bounty programs." }
-        if !localTestingAllowed { return "The target cannot be validated entirely in an authorized local environment." }
-        if toolingPolicy == .prohibited { return "The program rules prohibit the required diff tooling." }
-        if !identityVerified { return "Identity verification must be completed before Bugcrowd will accept a report." }
-        if lifecycle != .active { return "Confirm that the program is active before testing." }
-        if !highCriticalInScope { return "Confirm that High/Critical product vulnerabilities are reward-eligible." }
-        if !adjacentReleasesAvailable { return "Obtain an official adjacent release pair before starting patch analysis." }
-        if !scopeReviewed { return "Read the complete current brief, targets, exclusions, and disclosure terms." }
-        if toolingPolicy == .notReviewed { return "Classify the program's tooling and scanner policy." }
-        if toolingPolicy == .clarificationRequired { return "Obtain written clarification before using DiffSearchVuln." }
-        if disclosurePolicy == .notReviewed { return "Record the disclosure and confidentiality requirements." }
-        let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
-        if scopeReviewedAt < sevenDaysAgo { return "The saved scope review is stale; reread the brief before testing." }
-        return "The program passes the selection gates. Recheck its brief again immediately before submission."
     }
 }
 
@@ -329,8 +217,6 @@ final class AppModel {
     var selectedAnalysisID: String?
     var connectionState: WorkerConnectionState = .disconnected
     var products: [WorkerProduct] = []
-    var bountyPrograms: [BountyProgramRecord] = []
-    var selectedBountyProgramID: String?
     var candidatePage: WorkerCandidatePage?
     var selectedCandidateID: String?
     var selectedEvidence: WorkerEvidenceDossier?
@@ -396,14 +282,6 @@ final class AppModel {
                 "bdcb16d95c51997c9be169b92ad841a9eb0bc3566bc625bbc6cc0e9e3d0d3a89"
             )
         tournamentRunDirectory = nil
-
-        if let encoded = defaults.data(forKey: "bountyPrograms"),
-           let decoded = try? JSONDecoder().decode([BountyProgramRecord].self, from: encoded) {
-            bountyPrograms = decoded
-        }
-        let storedProgramSelection = defaults.string(forKey: "selectedBountyProgramID")
-        selectedBountyProgramID = bountyPrograms.contains { $0.id == storedProgramSelection }
-            ? storedProgramSelection : bountyPrograms.first?.id
 
         if let encoded = defaults.data(forKey: "analysisCases"),
            let decoded = try? JSONDecoder().decode([AnalysisCase].self, from: encoded) {
@@ -524,64 +402,9 @@ final class AppModel {
             case .summary, .exploitLab:
                 loadSelectedAnalysis()
             }
-        case .programs:
-            break
         case .settings:
             connect()
         }
-    }
-
-    func addBountyProgram(name: String, programURL: String, targetName: String) {
-        let record = BountyProgramRecord(
-            id: UUID().uuidString,
-            name: name,
-            platform: "Bugcrowd",
-            programURL: programURL,
-            targetName: targetName,
-            maximumP1Reward: "",
-            maximumP2Reward: "",
-            access: .publicProgram,
-            lifecycle: .notReviewed,
-            toolingPolicy: .notReviewed,
-            disclosurePolicy: .notReviewed,
-            isPaid: true,
-            highCriticalInScope: false,
-            localTestingAllowed: false,
-            adjacentReleasesAvailable: false,
-            scopeReviewed: false,
-            scopeReviewedAt: Date(),
-            identityVerified: false,
-            priorReportConflict: false,
-            notes: ""
-        )
-        bountyPrograms.append(record)
-        selectedBountyProgramID = record.id
-        defaults.set(record.id, forKey: "selectedBountyProgramID")
-        persistBountyPrograms()
-    }
-
-    func replaceBountyProgram(_ record: BountyProgramRecord) {
-        guard let index = bountyPrograms.firstIndex(where: { $0.id == record.id }) else {
-            return
-        }
-        bountyPrograms[index] = record
-        persistBountyPrograms()
-    }
-
-    func selectBountyProgram(_ identifier: String?) {
-        selectedBountyProgramID = identifier
-        defaults.set(identifier, forKey: "selectedBountyProgramID")
-    }
-
-    func removeSelectedBountyProgram() {
-        guard let identifier = selectedBountyProgramID,
-              let index = bountyPrograms.firstIndex(where: { $0.id == identifier }) else {
-            return
-        }
-        bountyPrograms.remove(at: index)
-        selectedBountyProgramID = bountyPrograms.first?.id
-        defaults.set(selectedBountyProgramID, forKey: "selectedBountyProgramID")
-        persistBountyPrograms()
     }
 
     func refreshProducts() {
@@ -932,12 +755,6 @@ final class AppModel {
     private func persistAnalysisCases() {
         if let encoded = try? JSONEncoder().encode(analysisCases) {
             defaults.set(encoded, forKey: "analysisCases")
-        }
-    }
-
-    private func persistBountyPrograms() {
-        if let encoded = try? JSONEncoder().encode(bountyPrograms) {
-            defaults.set(encoded, forKey: "bountyPrograms")
         }
     }
 
